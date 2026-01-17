@@ -12,10 +12,16 @@ using epsilon::ml::rf::structural::FastForest;
 
 int main()
 {
-    crow::SimpleApp app;
+    crow::App<crow::CORSHandler> app;
+
+    app.get_middleware<crow::CORSHandler>()
+        .global()
+        .headers("Content-Type", "Accept", "Origin")
+        .methods("GET"_method, "POST"_method, "OPTIONS"_method)
+        .origin("*");
 
     int port = 18080;
-    if constexpr (const char* env_p = std::getenv("PORT")) 
+    if (const char* env_p = std::getenv("PORT")) 
     {
         port = std::stoi(env_p);
     }
