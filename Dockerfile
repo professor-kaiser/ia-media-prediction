@@ -3,7 +3,7 @@ FROM ubuntu:22.04 AS build
 
 # Installer les outils
 RUN apt-get update && apt-get install -y \
-    g++ cmake make libcurl4-openssl-dev libasio-dev
+    g++ cmake make libcurl4-openssl-dev libasio-dev libgomp1
 
 WORKDIR /app
 
