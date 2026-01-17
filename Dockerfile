@@ -26,4 +26,4 @@ COPY --from=build /app/model.bin .
 
 EXPOSE 18080
 
-CMD ["./rf_server]
+CMD ["./rf_server"]
