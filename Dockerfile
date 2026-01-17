@@ -20,7 +20,12 @@ RUN g++ -I./RandomForest -fopenmp -O3 -march=native -std=c++20 \
 # Étape 2 : Runtime léger
 FROM ubuntu:22.04
 
+# Installer libgomp pour OpenMP + autres libs
+RUN apt-get update && apt-get install -y libgomp1 libasio-dev libcurl4-openssl-dev
+
 WORKDIR /app
+
+# Copier le binaire et le modèle depuis l'étape build
 COPY --from=build /app/rf_server .
 COPY --from=build /app/model.bin .
 
