@@ -34,10 +34,11 @@ namespace epsilon::ml::rf::structural
     		requires std::is_arithmetic_v<decltype(x)>;
 
 		int predict(const std::vector<float>& data) override;
+		int predict(float* data, size_t size) override;
 
 		int build(
 		    const std::vector<float>& X,
-		    const std::vector<float>& y,
+		    const std::vector<int>& y,
 		    const std::pair<size_t, size_t>& size,
 		    const std::pair<int, int>& depth,
 		    std::mt19937& rng = internal_rng()) override;
@@ -65,6 +66,7 @@ namespace epsilon::ml::rf::structural
 		std::vector<int> lefts;
 		std::vector<int> rights;
 		std::vector<int> labels;
+		std::vector<int> boot;
 		int count = 0;
 		int cursor = 0;
 	};

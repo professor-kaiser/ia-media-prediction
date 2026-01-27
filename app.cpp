@@ -13,6 +13,7 @@ using epsilon::ml::rf::structural::FastForest;
 int main()
 {
     crow::App<crow::CORSHandler> app;
+    constexpr size_t FEATURES_SIZE = 4;
 
     app.get_middleware<crow::CORSHandler>()
         .global()
@@ -30,6 +31,54 @@ int main()
     std::ifstream is("model.bin", std::ios::binary);
     cereal::BinaryInputArchive archive(is);
     archive(forest);
+
+    CROW_ROUTE(app, "/rf/prediction/videos")
+    .methods("POST"_method) 
+    ([&](const crow::request& req, crow::response& res) {
+        const auto& body = crow::json::load(req.body);
+        crow::json::wvalue result;
+
+        if (!body || !body.has("samples"))
+        {
+            result["message"] = "Invalid JSON :(";
+            res.code = 400;
+            res.write(result.dump());
+            res.end();
+
+            return;
+        }
+
+        const auto& samples = body["samples"];
+        std::vector<float> X;
+        std::vector<int> y;
+        const size_t n_samples = samples.size();
+
+        X.reserve(n_samples);
+        y.reserve(n_samples);
+
+        for (const auto& sample : samples)
+        {
+            std::transform(sample.begin(), sample.end(),
+                std::back_inserter(X), 
+                [&](const crow::json::rvalue& v) { 
+                    return static_cast<float>(v.d()); 
+                });
+        }
+
+        for (size_t i = 0; i < n_samples; i++)
+        {
+            y.emplace_back(
+                forest->predict(X.data() + i * FEATURES_SIZE, FEATURES_SIZE));
+        }
+
+        result["prediction"] = y;
+        result["message"] = "Ok ;)";
+
+        res.code = 200;
+        res.set_header("Content-Type", "application/json");
+        res.write(result.dump());
+        res.end();
+    });
 
     CROW_ROUTE(app, "/rf/prediction/video")
     .methods("POST"_method) 

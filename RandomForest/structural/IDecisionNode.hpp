@@ -18,11 +18,12 @@ namespace epsilon::ml::rf::structural
 	public:
 		virtual int build(
 		    const std::vector<float>& X,
-		    const std::vector<float>& y,
+		    const std::vector<int>& y,
 		    const std::pair<size_t, size_t>& size,
 		    const std::pair<int, int>& depth,
 		    std::mt19937& rng) = 0;
 		virtual int predict(const std::vector<float>&) = 0;
+		virtual int predict(float* data, size_t size) = 0;
 		virtual ~IDecisionNode() = default;	
 
 		template <class Archive>

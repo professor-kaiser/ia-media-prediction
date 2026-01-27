@@ -14,7 +14,7 @@ namespace epsilon::ml::rf::structural
 {
 	class FastForest final : public IDecisionNode
 	{
-	private:
+	public:
 		std::vector<std::shared_ptr<IDecisionNode>> nodes;
 		size_t count;
 
@@ -23,10 +23,11 @@ namespace epsilon::ml::rf::structural
 		FastForest(size_t c);
 
 		int predict(const std::vector<float>& data) override;
+		int predict(float* data, size_t size) override;
 
 		int build(
 		    const std::vector<float>& X,
-		    const std::vector<float>& y,
+		    const std::vector<int>& y,
 		    const std::pair<size_t, size_t>& size,
 		    const std::pair<int, int>& depth,
 		    std::mt19937& rng = internal_rng()) override;
